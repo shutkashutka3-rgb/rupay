@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="rupay",
-    version="0.1.0",
+    version="0.2.0",
     author="rupay contributors",
     description="Единая Python-библиотека для работы с российскими платежными системами",
     long_description=long_description,
@@ -47,4 +47,5 @@ setup(
         "Issues": "https://github.com/shutkashutka3-rgb/rupay/issues",
     },
 )
+
 

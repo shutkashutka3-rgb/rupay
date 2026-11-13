@@ -6,7 +6,7 @@
 
 **Единая Python-библиотека для работы с российскими платежными системами**
 
-Простая интеграция с ЮMoney (Яндекс.Деньги), QIWI и Tinkoff через единый интерфейс.
+Простая интеграция с ЮMoney, QIWI, Tinkoff, ЮKassa и СберБанк через единый интерфейс.
 
 ---
 
@@ -23,7 +23,7 @@
   
   <p><b>Ваши донаты помогают:</b></p>
   <p>✅ Поддерживать библиотеку актуальной<br>
-  ✅ Добавлять новые платежные системы (ЮKassa, Сбербанк)<br>
+  ✅ Добавлять новые платежные системы<br>
   ✅ Улучшать документацию<br>
   ✅ Быстрее отвечать на issues</p>
 </div>
@@ -33,6 +33,7 @@
 ## 🚀 Возможности
 
 - **Единый API** для всех платежных систем
+- **5 платежных систем**: ЮMoney, QIWI, Tinkoff, ЮKassa, СберБанк
 - **Async/await поддержка** для высокой производительности
 - **Type hints** для удобной разработки
 - **Простая интеграция** — всего несколько строк кода
@@ -41,15 +42,15 @@
 
 ## 📦 Установка
 
-`ash
+```bash
 pip install rupay
-`
+```
 
 ## 🔧 Быстрый старт
 
 ### ЮMoney (Яндекс.Деньги)
 
-`python
+```python
 from rupay import YooMoneyClient
 
 # Инициализация клиента
@@ -66,11 +67,11 @@ print(f"Ссылка для оплаты: {payment['confirmation_url']}")
 # Проверка статуса
 status = client.get_payment_status(payment['id'])
 print(f"Статус: {status['status']}")
-`
+```
 
 ### QIWI
 
-`python
+```python
 from rupay import QiwiClient
 
 # Инициализация
@@ -84,11 +85,11 @@ print(f"Баланс: {balance['amount']} {balance['currency']}")
 history = client.get_history(rows=10)
 for transaction in history:
     print(f"{transaction['date']}: {transaction['sum']} руб.")
-`
+```
 
 ### Tinkoff Acquiring
 
-`python
+```python
 from rupay import TinkoffClient
 
 # Инициализация
@@ -108,26 +109,77 @@ print(f"Ссылка: {payment['PaymentURL']}")
 # Проверка статуса
 status = client.get_state(payment['PaymentId'])
 print(f"Статус: {status['Status']}")
-`
+```
+
+### ЮKassa 🆕
+
+```python
+from rupay import YuKassaClient
+
+# Инициализация
+client = YuKassaClient(
+    shop_id="your_shop_id",
+    secret_key="your_secret_key"
+)
+
+# Создание платежа
+payment = client.create_payment(
+    amount=500.0,
+    description="Оплата заказа",
+    return_url="https://yoursite.com/success"
+)
+print(f"Ссылка: {payment['confirmation_url']}")
+
+# Проверка статуса
+status = client.get_payment_status(payment['id'])
+print(f"Статус: {status['status']}, Оплачено: {status['paid']}")
+```
+
+### СберБанк 🆕
+
+```python
+from rupay import SberbankClient
+
+# Инициализация
+client = SberbankClient(
+    username="your_username",
+    password="your_password"
+)
+
+# Создание платежа
+payment = client.create_payment(
+    amount=1000.0,
+    description="Оплата заказа",
+    return_url="https://yoursite.com/success"
+)
+print(f"Ссылка: {payment['confirmation_url']}")
+
+# Проверка статуса
+status = client.get_payment_status(payment['id'])
+print(f"Статус: {status['status']}")
+```
 
 ## 🔄 Async версия
 
 Все клиенты поддерживают асинхронную работу:
 
-`python
-from rupay import AsyncYooMoneyClient
+```python
+from rupay import AsyncYuKassaClient, AsyncSberbankClient
 import asyncio
 
 async def main():
-    client = AsyncYooMoneyClient(token="your_token")
-    payment = await client.create_payment(
-        amount=100.0,
-        description="Async платеж"
-    )
-    print(payment)
+    # ЮKassa
+    yukassa = AsyncYuKassaClient(shop_id="...", secret_key="...")
+    payment = await yukassa.create_payment(amount=100.0, description="Test")
+    
+    # СберБанк
+    sber = AsyncSberbankClient(username="...", password="...")
+    order = await sber.create_payment(amount=200.0, description="Order")
+    
+    print(payment, order)
 
 asyncio.run(main())
-`
+```
 
 ## 📚 Документация
 
@@ -136,7 +188,8 @@ asyncio.run(main())
 - [Руководство по ЮMoney](docs/yoomoney.md)
 - [Руководство по QIWI](docs/qiwi.md)
 - [Руководство по Tinkoff](docs/tinkoff.md)
-- [Обработка Webhook](docs/webhooks.md)
+- [Руководство по ЮKassa](docs/yukassa.md) 🆕
+- [Руководство по СберБанк](docs/sberbank.md) 🆕
 - [Примеры использования](examples/)
 
 ## 🎯 Зачем rupay?
@@ -150,18 +203,26 @@ asyncio.run(main())
 
 ### Решение
 **rupay** — единый интерфейс для всех систем:
-`python
+```python
 # Одинаковый код для всех платежных систем
-for client in [yoomoney_client, qiwi_client, tinkoff_client]:
+for client in [yoomoney, qiwi, tinkoff, yukassa, sberbank]:
     payment = client.create_payment(amount=100, description="Тест")
     status = client.get_payment_status(payment['id'])
-`
+```
 
 ## 🛠️ Требования
 
 - Python 3.7+
 - requests >= 2.25.0
 - aiohttp >= 3.7.0 (для async версии)
+
+## 🎉 Что нового в v0.2.0
+
+- ✅ Добавлена поддержка **ЮKassa** (YooKassa)
+- ✅ Добавлена поддержка **СберБанк Acquiring**
+- ✅ Синхронные и асинхронные версии для новых систем
+- ✅ Единый интерфейс create_payment() для всех систем
+- ✅ Примеры использования и документация
 
 ## 📄 Лицензия
 
@@ -173,13 +234,13 @@ MIT License — используйте свободно в любых проек
 
 ## ✨ Roadmap
 
-- [ ] Поддержка ЮKassa (CloudPayments)
-- [ ] Сбербанк Acquiring API
+- [x] ЮKassa (YooKassa) ✅
+- [x] СберБанк Acquiring ✅
 - [ ] Webhook валидация для всех систем
 - [ ] CLI инструмент для быстрой проверки
 - [ ] Плагины для Django/Flask
+- [ ] Alfa-Bank Acquiring API
 
 ---
 
 **Made with ❤️ for Russian developers**
-

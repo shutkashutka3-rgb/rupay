@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rupay"
-version = "0.1.0"
-description = "Единая Python-библиотека для работы с российскими платежными системами (ЮMoney, QIWI, Tinkoff)"
+version = "0.2.0"
+description = "?????? Python-?????????? ??? ?????? ? ??????????? ?????????? ????????? (?Money, QIWI, Tinkoff)"
 readme = "README.md"
 authors = [
     {name = "rupay contributors"}
@@ -46,4 +46,5 @@ Homepage = "https://github.com/shutkashutka3-rgb/rupay"
 Documentation = "https://github.com/shutkashutka3-rgb/rupay#readme"
 Repository = "https://github.com/shutkashutka3-rgb/rupay"
 Issues = "https://github.com/shutkashutka3-rgb/rupay/issues"
+
 
